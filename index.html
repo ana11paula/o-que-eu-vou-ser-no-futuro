@@ -1,0 +1,423 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Minha História | Capítulos da Vida</title>
+    <!-- Fontes editoriais: Lora para títulos narrativos e Plus Jakarta Sans para leitura -->
+    <link href="https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,500;0,700;1,500&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <style>
+        :root {
+            --bg-dark: #120d0a;
+            --card-bg: rgba(34, 24, 19, 0.72);
+            --card-border: rgba(251, 191, 36, 0.16);
+            --primary: #f59e0b;      /* Âmbar Dourado */
+            --secondary: #f97316;    /* Laranja Quente */
+            --accent: #fb7185;       /* Coral */
+            --sand: #fde68a;         /* Areia Clara */
+            --text-main: #fdf8f6;
+            --text-muted: #dfd3cc;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background-color: var(--bg-dark);
+            color: var(--text-main);
+            font-family: 'Plus Jakarta Sans', sans-serif;
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+            padding: 70px 20px;
+        }
+
+        /* ================= FUNDO SUNSET QUENTE ================= */
+        .background-scene {
+            position: fixed;
+            inset: 0;
+            z-index: -2;
+            overflow: hidden;
+            background: radial-gradient(circle at 50% 0%, #2b1912 0%, #120d0a 75%);
+        }
+
+        .bg-grid {
+            position: absolute;
+            inset: 0;
+            background-size: 55px 55px;
+            background-image: 
+                linear-gradient(to right, rgba(251, 191, 36, 0.03) 1px, transparent 1px),
+                linear-gradient(to bottom, rgba(251, 191, 36, 0.03) 1px, transparent 1px);
+            mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+            -webkit-mask-image: radial-gradient(ellipse at center, black 35%, transparent 80%);
+        }
+
+        .aurora {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(120px);
+            opacity: 0.28;
+            animation: floatAurora 18s infinite alternate ease-in-out;
+        }
+
+        .aurora-1 {
+            width: 550px;
+            height: 550px;
+            background: var(--primary);
+            top: -15%;
+            left: -10%;
+        }
+
+        .aurora-2 {
+            width: 600px;
+            height: 600px;
+            background: var(--accent);
+            bottom: -15%;
+            right: -10%;
+            animation-delay: -6s;
+        }
+
+        .aurora-3 {
+            width: 450px;
+            height: 450px;
+            background: var(--secondary);
+            top: 40%;
+            left: 35%;
+            opacity: 0.18;
+            animation-delay: -12s;
+        }
+
+        @keyframes floatAurora {
+            0% { transform: translate(0, 0) scale(1); }
+            50% { transform: translate(60px, 40px) scale(1.12); }
+            100% { transform: translate(-40px, 80px) scale(0.95); }
+        }
+
+        #particles-canvas {
+            position: fixed;
+            inset: 0;
+            z-index: -1;
+            pointer-events: none;
+        }
+
+        /* ================= CABEÇALHO DE AUTOBIOGRAFIA ================= */
+        .story-header {
+            max-width: 720px;
+            margin: 0 auto 80px;
+            text-align: center;
+        }
+
+        .author-badge {
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            padding: 6px 18px;
+            background: rgba(245, 158, 11, 0.12);
+            border: 1px solid rgba(245, 158, 11, 0.35);
+            border-radius: 50px;
+            color: var(--sand);
+            font-size: 0.85rem;
+            font-weight: 600;
+            letter-spacing: 0.5px;
+            margin-bottom: 20px;
+        }
+
+        .story-header h1 {
+            font-family: 'Lora', serif;
+            font-size: 3.2rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #fffbeb 0%, #f59e0b 55%, #fb7185 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            margin-bottom: 18px;
+            line-height: 1.2;
+        }
+
+        .story-intro {
+            font-size: 1.12rem;
+            color: var(--text-muted);
+            line-height: 1.75;
+            font-style: italic;
+            font-family: 'Lora', serif;
+        }
+
+        /* ================= ESTRUTURA DE CAPÍTULOS ================= */
+        .book-container {
+            max-width: 760px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            gap: 45px;
+        }
+
+        .chapter {
+            background: var(--card-bg);
+            backdrop-filter: blur(20px);
+            -webkit-backdrop-filter: blur(20px);
+            border: 1px solid var(--card-border);
+            border-left: 4px solid var(--primary);
+            border-radius: 16px 24px 24px 16px;
+            padding: 36px 40px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.45);
+            opacity: 0;
+            transform: translateY(25px);
+            transition: all 0.6s cubic-bezier(0.16, 1, 0.3, 1);
+            position: relative;
+        }
+
+        .chapter:nth-child(even) {
+            border-left-color: var(--accent);
+        }
+
+        .chapter.visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
+        .chapter:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 45px rgba(249, 115, 22, 0.16);
+        }
+
+        .chapter-meta {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 14px;
+            padding-bottom: 14px;
+            border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+        }
+
+        .chapter-number {
+            font-size: 0.85rem;
+            text-transform: uppercase;
+            letter-spacing: 1.5px;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .chapter:nth-child(even) .chapter-number {
+            color: var(--accent);
+        }
+
+        .age-pill {
+            background: rgba(255, 255, 255, 0.07);
+            color: var(--sand);
+            padding: 4px 14px;
+            border-radius: 50px;
+            font-size: 0.9rem;
+            font-weight: 600;
+        }
+
+        .chapter h2 {
+            font-family: 'Lora', serif;
+            font-size: 1.75rem;
+            color: #fffbeb;
+            margin-bottom: 18px;
+            line-height: 1.3;
+        }
+
+        .chapter p {
+            color: var(--text-muted);
+            font-size: 1.05rem;
+            line-height: 1.8;
+            margin-bottom: 16px;
+        }
+
+        .chapter p:last-of-type {
+            margin-bottom: 0;
+        }
+
+        /* Frase de destaque / Pensamento daquela idade */
+        .thought-quote {
+            margin-top: 22px;
+            padding: 14px 20px;
+            background: rgba(245, 158, 11, 0.07);
+            border-radius: 12px;
+            font-family: 'Lora', serif;
+            font-style: italic;
+            color: var(--sand);
+            font-size: 0.98rem;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .chapter:nth-child(even) .thought-quote {
+            background: rgba(251, 113, 133, 0.08);
+        }
+
+        footer {
+            text-align: center;
+            margin-top: 75px;
+            color: var(--text-muted);
+            font-size: 0.9rem;
+        }
+
+        @media screen and (max-width: 640px) {
+            .story-header h1 {
+                font-size: 2.3rem;
+            }
+            .chapter {
+                padding: 26px 22px;
+            }
+            .chapter h2 {
+                font-size: 1.45rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="background-scene">
+        <div class="bg-grid"></div>
+        <div class="aurora aurora-1"></div>
+        <div class="aurora aurora-2"></div>
+        <div class="aurora aurora-3"></div>
+    </div>
+    <canvas id="particles-canvas"></canvas>
+
+    <!-- Cabeçalho estilo livro/diário -->
+    <header class="story-header">
+        <h1>A História Que Eu Quero Viver</h1>
+        <p class="story-intro">
+            "Cada fase da vida traz uma nova versão de quem somos. Estas páginas guardam como eu imagino a minha caminhada, as pessoas ao meu redor e os sonhos que quero realizar."
+        </p>
+    </header>
+
+    <!-- Capítulos da Vida -->
+    <main class="book-container">
+
+        <!-- CAPÍTULO 1: 18 ANOS -->
+        <article class="chapter">
+            <div class="chapter-meta">
+                <span class="chapter-number">Capítulo I</span>
+                <span class="age-pill">Aos 18 Anos</span>
+            </div>
+            <p>
+                Aos 18 anos, eu me vejo saindo da escola com muita vontade de conquistar o meu espaço. Quero estar começando a estudar algo que eu realmente goste, dando meus primeiros passos na faculdade ou em um curso técnico.
+            </p>
+        </article>
+
+        <!-- CAPÍTULO 2: 25 ANOS -->
+        <article class="chapter">
+            <div class="chapter-meta">
+                <span class="chapter-number">Capítulo II</span>
+                <span class="age-pill">Aos 25 Anos</span>
+            </div>
+            <p>
+                Com 25 ano,me imagino trabalhando na minha área, crescendo profissionalmente e tendo independência financeira para pagar minhas próprias contas e morar na minha própria casa
+            </p>
+        </article>
+
+        <!-- CAPÍTULO 3: 30 ANOS -->
+        <article class="chapter">
+            <div class="chapter-meta">
+                <span class="chapter-number">Capítulo III</span>
+                <span class="age-pill">Aos 30 Anos</span>
+            </div>
+            <p>
+                Aos 30 anos, quero sentir que construí uma base sólida. Na carreira, me vejo em uma posição de destaque ou até tocando um projeto próprio,ter uma vida financeira tranquila e organizada.
+            </p>
+        </article>
+
+        <!-- CAPÍTULO 4: 40 ANOS -->
+        <article class="chapter">
+            <div class="chapter-meta">
+                <span class="chapter-number">Capítulo IV</span>
+                <span class="age-pill">Aos 40 Anos</span>
+            </div>
+            <p>
+                Chegando aos 40 anos, quero ter liberdade para escolher com o que trabalhar, tendo mais tempo livre para estar presente na vida das pessoas que eu amo.
+            </p>
+        </article>
+
+        <!-- CAPÍTULO 5: 50+ ANOS -->
+        <article class="chapter">
+            <div class="chapter-meta">
+                <span class="chapter-number">Capítulo V</span>
+                <span class="age-pill">Aos 50+ Anos</span>
+            </div>
+            <p>
+                Dos 50 anos em diante, quero viver com leveza. Imagino uma vida sem preocupações financeiras, aproveitando meus hobbies, viajando sem pressa para lugares que sempre sonhei conhecer e aproveitando a companhia da minha família.
+            </p>
+        </article>
+
+    </main>
+
+    <footer>
+    </footer>
+
+    <script>
+        // Animação suave ao ler cada capítulo
+        const chapters = document.querySelectorAll('.chapter');
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('visible');
+                }
+            });
+        }, { threshold: 0.15 });
+
+        chapters.forEach(chapter => observer.observe(chapter));
+
+        // Partículas douradas no fundo
+        const canvas = document.getElementById('particles-canvas');
+        const ctx = canvas.getContext('2d');
+        let particles = [];
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        window.addEventListener('resize', resizeCanvas);
+        resizeCanvas();
+
+        class Particle {
+            constructor() {
+                this.x = Math.random() * canvas.width;
+                this.y = Math.random() * canvas.height;
+                this.size = Math.random() * 2 + 0.5;
+                this.speedY = Math.random() * 0.3 + 0.1;
+                this.opacity = Math.random() * 0.6 + 0.15;
+            }
+            update() {
+                this.y -= this.speedY;
+                if (this.y < 0) {
+                    this.y = canvas.height;
+                    this.x = Math.random() * canvas.width;
+                }
+            }
+            draw() {
+                ctx.fillStyle = `rgba(253, 230, 138, ${this.opacity})`;
+                ctx.beginPath();
+                ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+                ctx.fill();
+            }
+        }
+
+        function initParticles() {
+            particles = [];
+            for (let i = 0; i < 60; i++) {
+                particles.push(new Particle());
+            }
+        }
+
+        function animateParticles() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            particles.forEach(p => {
+                p.update();
+                p.draw();
+            });
+            requestAnimationFrame(animateParticles);
+        }
+
+        initParticles();
+        animateParticles();
+    </script>
+
+</body>
+</html>
